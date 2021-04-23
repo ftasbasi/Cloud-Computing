@@ -4,28 +4,8 @@ const upload = multer({dest: __dirname + '/uploads/images'});
 //use the application off of express.
 var app = express();
 const PORT = 8080;
-app.use(express.static('views'));
-const fs = require('fs')
 
-const dir = __dirname + "/uploads/images"
-const files = fs.readdirSync(dir)
-
-/*
-
-app.post('/upload', upload.single('photo'), (req, res) => {
-    if(req.file) {
-      //  res.json(req.file.originalname + " newID: "+req.file.filename);
-    }
-    else throw 'error';
-});
-var arr = [];
-*/
-//define the route for "/"
 app.get("/", function (request, response){
-   /* arr=[];
-    for (const file of files) {
-        arr.push(file);
-    }*/
     response.sendFile(__dirname+"/views/index.html");
 });
 
