@@ -1,4 +1,4 @@
-Middle East Technical University
+Middle East Technical University - 
 Computer Engineering Department
 
 CENG 495 - Cloud Computing Spring 2020-2021 Homework 1
