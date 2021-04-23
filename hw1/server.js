@@ -1,6 +1,4 @@
 var express = require("express");
-const multer = require('multer');
-const upload = multer({dest: __dirname + '/uploads/images'});
 //use the application off of express.
 var app = express();
 const PORT = 8080;
