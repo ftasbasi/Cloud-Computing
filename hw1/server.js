@@ -20,4 +20,4 @@ app.get("/getmeme", function (request, response){
 });
 
 //start the server
-app.listen(3030);
+app.listen(8080);
