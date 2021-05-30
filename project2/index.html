@@ -51,7 +51,8 @@
       console.error(err)
     });
 
-    db.collection('users').find().toArray().then(function (users){
+    
+      db.collection('users').find().toArray().then(function (users){
       if(users != null){
         var array_len=users.length;
         var select = document.getElementById("user_name_dropdown");
@@ -67,7 +68,7 @@
 
       }
     });
-
+  
     db.collection('games').find().toArray().then(function (games){
       if(games != null){
         var array_len=games.length;
@@ -82,8 +83,55 @@
 
       }
     });
+
+
   </script>
   <script>
+    function removeOptions(selectElement) {
+   var i, L = selectElement.options.length - 1;
+   for(i = L; i >= 0; i--) {
+      selectElement.remove(i);
+   }
+}
+
+
+
+    function loadUsers(){
+
+      db.collection('users').find().toArray().then(function (users){
+      if(users != null){
+        var array_len=users.length;
+        var select = document.getElementById("user_name_dropdown");
+
+        for(var i = 0; i < array_len; i++) {
+          if(users[i].username!=null){
+            var option = document.createElement('option');
+            option.text = option.value = users[i].username;
+            select.add(option, users[i].username);
+          }
+        }
+        
+
+      }
+    });
+    }
+    function loadGames(){
+
+      db.collection('games').find().toArray().then(function (games){
+      if(games != null){
+        var array_len=games.length;
+        var select = document.getElementById("game_name_dropdown");
+
+        for(var i = 0; i < array_len; i++) {
+            var option = document.createElement('option');
+            option.text = option.value = games[i].gamename;
+            select.add(option, games[i].gamename);
+        }
+        
+
+      }
+    });
+    }
       function addUser(){
                   db.collection('users').findOne({username: document.getElementById("username").value}).then(function(result){
                       if(result != null){
@@ -93,11 +141,11 @@
                           alert("Enter a valid username.");                      
                       }
                       else{
-                          db.collection('users').insertOne({username: document.getElementById("username").value,totalplaytime:0});
+                          db.collection('users').insertOne({username: document.getElementById("username").value,totalplaytime:0,avgRatings:"0"});
                           alert("User is added.");
                       }
                   });
-              }
+                }
 
     function removeUser(){
       var myDocument = db.collection('users').findOne({username: document.getElementById("user_name_dropdown").value});
@@ -128,7 +176,7 @@
                           gamegenres:document.getElementById("gamegenres").value,
                           gamephoto:document.getElementById("gamephoto").value,
                           playtime:0,
-                          rating:0,
+                          rating:String(0),
                           is_enabled:true,
                           gameoptional1:document.getElementById("gameoptional1").value,
                           gameoptional2:document.getElementById("gameoptional2").value});
@@ -146,7 +194,8 @@
             .catch(err => {
             console.error(err)
             }));
-            alert("Game is removed.");              
+            alert("Game is removed.");     
+                     
         }
         else{
             alert("Cannot find game.");

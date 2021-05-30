@@ -13,6 +13,11 @@
 
   <div>
     <label id="user_tag"></label>
+
+  </div>
+  <div>
+    <label id="user_avg_ratings"></label>
+
   </div>
 
   <div>
@@ -63,6 +68,26 @@
     
     document.getElementById("user_tag").textContent="User : "+name;
 
+    db.collection('rates').find({username : name}).toArray().then(function (ratingsOfUser){
+      if(ratingsOfUser != null){
+        var array_len=ratingsOfUser.length;
+        var total = 0;
+
+        for(var i = 0; i < array_len; i++) {
+            total=total+parseFloat(ratingsOfUser[i].rate);
+
+        }
+        console.log("total:"+total);
+        var avg=0;
+        avg=total/array_len;
+        console.log("avg:"+avg);
+
+        document.getElementById("user_avg_ratings").textContent="Avg Rating : "+avg;
+
+
+
+      }
+    });
 
   </script>
 
@@ -98,7 +123,7 @@
       }
       function rateGame(){
             db.collection('rates').updateOne({gamename:document.getElementById("game_name_dropdown").value,username : name}, 
-            { $set:{rate:document.getElementById("gamerate").value}}, { upsert: true },
+            { $set:{rate:parseInt(document.getElementById("gamerate").value)}}, { upsert: true },
               function(err, res) {
                 if (err){
                   throw err;
@@ -108,34 +133,7 @@
 
               }
             );
-            db.collection('rates').find({username : name}).toArray().then(function (ratingsOfUser){
-      if(ratingsOfUser != null){
-        var array_len=ratingsOfUser.length;
-        var total = 0;
-
-        for(var i = 0; i < array_len; i++) {
-            total=total+parseFloat(ratingsOfUser[i].rate);
-
-        }
-        console.log("total:"+total);
-        var avg=0;
-        avg=total/array_len;
-        console.log("avg:"+avg);
-
-        db.collection('users').updateOne({username : name}, 
-            { $set:{avgRatings:avg}},
-              function(err, res) {
-                if (err){
-                  throw err;
-                console.log(err);
-                return;
-                } 
-
-              }
-            );
-
-      }
-    });
+            
 
     alert(document.getElementById("game_name_dropdown").value+" is rated!");
 
@@ -148,6 +146,9 @@
 
     function toHomepage(){
       loadUrl("./index.html");
+    }
+    function lookGames(){
+      loadUrl("./games.html");
     }
 
   </script>
