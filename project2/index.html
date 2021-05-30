@@ -1,1 +1,198 @@
 
+<!DOCTYPE html>
+<html>
+<head>
+    <meta content="text/html;charset=utf-8" http-equiv="Content-Type">
+    <meta content="utf-8" http-equiv="encoding">
+    <title>Game Distributor</title>
+    <script src="https://s3.amazonaws.com/stitch-sdks/js/bundles/4.6.0/stitch.js"></script>
+  <div>
+    <input type="text" id="username" class="input-name" placeholder="Username" >
+    <button class="button" onclick="addUser()" value="addUser">addUser</button>
+
+  </div>
+  <div>
+    <label for="User Name">Select user</label>
+    <select id="user_name_dropdown" name="user_name_dropdown" class="form-control" placeholder="User name" required> </select>
+    <button class="button" onclick="removeUser()" value="removeUser">removeUser</button>
+    <button class="button" onclick="login()" value="login">Login</button>
+  </div>
+  <div>
+    <input type="text" id="gamename" class="input-name" placeholder="Game Name" >
+    <input type="text" id="gamegenres" class="input-name" placeholder="Game Genre(s)" >
+    <input type="text" id="gamephoto" class="input-name" placeholder="Game Photo" >
+    <input type="text" id="gameoptional1" class="input-name" placeholder="Game Optional 1" >
+    <input type="text" id="gameoptional2" class="input-name" placeholder="Game Optional 2" >
+    <button class="button" onclick="addGame()" value="addGame">addGame</button>
+  </div>
+  <div>
+    <label for="Game Name">Select game</label>
+    <select id="game_name_dropdown" name="game_name_dropdown" class="form-control" placeholder="Game name" required> </select>
+    <button class="button" onclick="removeGame()" value="removeGame">removeGame</button>
+    <button class="button" onclick="disableRatingComment()" value="disableRatingComment">disableRatingComment</button>
+    <button class="button" onclick="enableRatingComment()" value="enableRatingComment">enableRatingComment</button>
+
+  </div>
+
+</head>
+
+<body>
+  <script>
+    const client = stitch.Stitch.initializeDefaultAppClient('gamedistributorapp1-rlxbb');
+    const db = client.getServiceClient(stitch.RemoteMongoClient.factory, 'mongodb-atlas').db('hw2DB');
+    client.auth.loginWithCredential(new stitch.AnonymousCredential()).then(user =>
+      db.collection('users').updateOne({owner_id: client.auth.user.id}, {$set:{number:42}}, {upsert:true})
+    ).then(() =>
+      db.collection('users').find({owner_id: client.auth.user.id}, { limit: 100}).asArray()
+    ).then(docs => {
+        console.log("Found docs", docs)
+        console.log("[MongoDB Realm] Connected to Realm")
+    }).catch(err => {
+      console.error(err)
+    });
+
+    db.collection('users').find().toArray().then(function (users){
+      if(users != null){
+        var array_len=users.length;
+        var select = document.getElementById("user_name_dropdown");
+
+        for(var i = 0; i < array_len; i++) {
+          if(users[i].username!=null){
+            var option = document.createElement('option');
+            option.text = option.value = users[i].username;
+            select.add(option, users[i].username);
+          }
+        }
+        
+
+      }
+    });
+
+    db.collection('games').find().toArray().then(function (games){
+      if(games != null){
+        var array_len=games.length;
+        var select = document.getElementById("game_name_dropdown");
+
+        for(var i = 0; i < array_len; i++) {
+            var option = document.createElement('option');
+            option.text = option.value = games[i].gamename;
+            select.add(option, games[i].gamename);
+        }
+        
+
+      }
+    });
+  </script>
+  <script>
+      function addUser(){
+                  db.collection('users').findOne({username: document.getElementById("username").value}).then(function(result){
+                      if(result != null){
+                          alert("User already exists.");              
+                      }
+                      else if(document.getElementById("username").value === ""){
+                          alert("Enter a valid username.");                      
+                      }
+                      else{
+                          db.collection('users').insertOne({username: document.getElementById("username").value,totalplaytime:0});
+                          alert("User is added.");
+                      }
+                  });
+              }
+
+    function removeUser(){
+      var myDocument = db.collection('users').findOne({username: document.getElementById("user_name_dropdown").value});
+      myDocument.then(function(result){
+        if(result != null){
+            client.auth.loginWithCredential(new stitch.AnonymousCredential()).then(user =>
+            db.collection('users').deleteOne({username: document.getElementById("user_name_dropdown").value})
+            .catch(err => {
+            console.error(err)
+            }));
+            alert("User is removed.");              
+        }
+        else{
+            alert("Cannot find user.");
+        }
+      });
+      }
+      function addGame(){
+                  db.collection('games').findOne({gamename: document.getElementById("gamename").value}).then(function(result){
+                      if(result != null){
+                          alert("Game already exists.");              
+                      }
+                      else if(document.getElementById("gamename").value === ""){
+                          alert("Enter a valid game name.");                      
+                      }
+                      else{
+                          db.collection('games').insertOne({gamename: document.getElementById("gamename").value,
+                          gamegenres:document.getElementById("gamegenres").value,
+                          gamephoto:document.getElementById("gamephoto").value,
+                          playtime:0,
+                          rating:0,
+                          is_enabled:true,
+                          gameoptional1:document.getElementById("gameoptional1").value,
+                          gameoptional2:document.getElementById("gameoptional2").value});
+                          alert("Game is added.");
+                      
+                        }
+                  });
+              }
+      function removeGame(){
+      var myDocument = db.collection('games').findOne({gamename: document.getElementById("game_name_dropdown").value});
+      myDocument.then(function(result){
+        if(result != null){
+            client.auth.loginWithCredential(new stitch.AnonymousCredential()).then(user =>
+            db.collection('games').deleteOne({gamename: document.getElementById("game_name_dropdown").value})
+            .catch(err => {
+            console.error(err)
+            }));
+            alert("Game is removed.");              
+        }
+        else{
+            alert("Cannot find game.");
+        }
+      });
+      }
+      function login(){
+            const loginuser = document.getElementById("user_name_dropdown").value;
+            document.getElementById("user_name_dropdown").value = "";
+            var myDocument = db.collection('users').findOne({username: loginuser});
+        
+            myDocument.then(function(result){
+                if(result != null){
+                    loadUrl("./user.html?username=" + loginuser);
+                }
+                else{
+                    alert("User doesn't exist.");
+                }
+            });
+        }
+        function disableRatingComment(){
+          var myquery = { gamename: document.getElementById("game_name_dropdown").value };
+          var newvalues = { $set: {is_enabled: false} };
+                  db.collection('games').findOne({}).then(function(result){
+                      if(result != null){
+                        db.collection('games').updateOne(myquery,newvalues);
+                      }
+                  });
+                  alert("Game is updated.");
+              }
+        function enableRatingComment(){
+          var myquery = { gamename: document.getElementById("game_name_dropdown").value };
+          var newvalues = { $set: {is_enabled: true} };
+                db.collection('games').findOne({}).then(function(result){
+                    if(result != null){
+                      db.collection('games').updateOne(myquery,newvalues);
+                    }
+                });
+                alert("Game is updated.");
+        }
+        function loadUrl(newurl){
+            window.location = newurl;
+            return false;
+        }
+    
+</script>
+
+</body>
+</html>

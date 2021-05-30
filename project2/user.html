@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta content="text/html;charset=utf-8" http-equiv="Content-Type">
+  <meta content="utf-8" http-equiv="encoding">
+  <title>User Profile</title>
+  <link rel="stylesheet" href="./styles/style.css" type="text/css"/>
+  <script src="https://s3.amazonaws.com/stitch-sdks/js/bundles/4.6.0/stitch.js"></script>
+</head>
+
+<body>
+
+  <div>
+    <label id="user_tag"></label>
+  </div>
+
+  <div>
+    <label for="Game Name">Select game</label>
+    <select id="game_name_dropdown" name="game_name_dropdown" class="form-control" placeholder="Game name" required> </select>
+    
+
+  </div>
+  <div>
+    <input id="gamerate" type="number" min="1" max="5" step="1" value="1" required>
+    <button class="button" onclick="rateGame()" value="rateGame">rateGame</button>
+  </div>
+  <div>
+    <input id="playedtimeval" type="number" min="1" max="10" step="1" value="1" required>
+    <button class="button" onclick="playGame()" value="playGame">playGame</button>
+  </div>
+  <div>
+    <input type="text" id="commentInput" class="input-name" placeholder="Comment here" >
+
+    <button class="button" onclick="commentOnGame()" value="commentOnGame">commentOnGame</button>
+  </div>
+  <div>
+    <button class="button" onclick="lookGames()" value="lookGames">lookGames</button>
+  </div>
+  <div>
+    <button class="button" onclick="toHomepage()">Back to Home</button>
+  </div>
+  
+  <script>
+    const client = stitch.Stitch.initializeDefaultAppClient('gamedistributorapp1-rlxbb');
+    const db = client.getServiceClient(stitch.RemoteMongoClient.factory, 'mongodb-atlas').db('hw2DB');
+    const name = (new URL(window.location.href)).searchParams.get("username");
+    const criteria = { username: name }
+    db.collection('games').find().toArray().then(function (games){
+      if(games != null){
+        var array_len=games.length;
+        var select = document.getElementById("game_name_dropdown");
+
+        for(var i = 0; i < array_len; i++) {
+            var option = document.createElement('option');
+            option.text = option.value = games[i].gamename;
+            select.add(option, games[i].gamename);
+        }
+        
+
+      }
+    });
+    
+    document.getElementById("user_tag").textContent="User : "+name;
+
+
+  </script>
+
+  <script>
+      function playGame(){
+                 
+                  
+                db.collection('users').findOne({}).then(function(result){
+                    if(result != null){
+                      var play_amount = parseInt(document.getElementById("playedtimeval").value);
+                      db.collection('users').updateOne({username : name},{ $inc: { totalplaytime: play_amount}});
+                      db.collection('plays').insertOne({username: name,gamename:document.getElementById("game_name_dropdown").value,duration:play_amount});
+                      alert(name + " is played "+ document.getElementById("playedtimeval").value+" hours");
+
+                    }
+                });
+              
+              }
+              
+    function commentOnGame(){
+        
+      
+        db.collection('plays').findOne({username:name,gamename:document.getElementById("game_name_dropdown").value}).then(function(result){
+            if(result != null){
+              db.collection('comments').updateOne({username : name,gamename:document.getElementById("game_name_dropdown").value},{ $set:{Comment:document.getElementById("commentInput").value}},{ upsert: true });
+              alert("Commented");
+
+            }else{
+              alert("You have not played this game yet!");
+            }
+        });
+      
+      }
+      function rateGame(){
+            db.collection('rates').updateOne({gamename:document.getElementById("game_name_dropdown").value,username : name}, 
+            { $set:{rate:document.getElementById("gamerate").value}}, { upsert: true },
+              function(err, res) {
+                if (err){
+                  throw err;
+                console.log(err);
+                return;
+                } 
+
+              }
+            );
+            db.collection('rates').find({username : name}).toArray().then(function (ratingsOfUser){
+      if(ratingsOfUser != null){
+        var array_len=ratingsOfUser.length;
+        var total = 0;
+
+        for(var i = 0; i < array_len; i++) {
+            total=total+parseFloat(ratingsOfUser[i].rate);
+
+        }
+        console.log("total:"+total);
+        var avg=0;
+        avg=total/array_len;
+        console.log("avg:"+avg);
+
+        db.collection('users').updateOne({username : name}, 
+            { $set:{avgRatings:avg}},
+              function(err, res) {
+                if (err){
+                  throw err;
+                console.log(err);
+                return;
+                } 
+
+              }
+            );
+
+      }
+    });
+
+    alert(document.getElementById("game_name_dropdown").value+" is rated!");
+
+
+      }
+    function loadUrl(newLocation){
+      window.location = newLocation;
+      return false;
+    }
+
+    function toHomepage(){
+      loadUrl("./index.html");
+    }
+
+  </script>
+
+</body>
+
+</html>
