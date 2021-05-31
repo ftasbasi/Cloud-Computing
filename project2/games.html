@@ -4,206 +4,140 @@
 <head>
   <meta content="text/html;charset=utf-8" http-equiv="Content-Type">
   <meta content="utf-8" http-equiv="encoding">
-  <title>Invention Page</title>
+  <title>Games Page</title>
   <link rel="stylesheet" href="./styles/style.css" type="text/css"/>
   <script src="https://s3.amazonaws.com/stitch-sdks/js/bundles/4.6.0/stitch.js"></script>
+  <div>
+    
+    <label id="user_tag"></label>
+
+  </div>
+ 
+ 
+  <div class="container" id="galleryDiv">
+
+
+  </div>
 </head>
 
 <body>
-  <p>Invention Information</p>
-  <h3 id = "product_owner"></h3>
-  <img id="product_photo" class="product-img">
-  <h3 id = "product_name"></h3>
-  <h3 id = "product_cost"></h3>
-  <h3 id = "product_material"></h3>
-  <h3 id = "product_rating"></h3>
-  <h3 id = "Optional1"></h3>
-  <h3 id = "Optional2"></h3>
-
-
-  <button type="button" onclick="dropProduct()">Drop Product</button>
-  <h1></h1>
-
-  <div>
-    <input type="radio" value="1" name="rating">
-    <input type="radio" value="2" name="rating">
-    <input type="radio" value="3" name="rating">
-    <input type="radio" value="4" name="rating">
-    <input type="radio" value="5" name="rating">
-    <h1></h1>
-    <button type="button" onclick="rateProduct()">Rate Product</button>
-  </div>
-  
-  <h1></h1>
-  <button type="button" onclick="toUserpage()">Back to User Page</button>
-
-
   <script>
-    const client = stitch.Stitch.initializeDefaultAppClient('hw2-app-kktvp');
-    const db = client.getServiceClient(stitch.RemoteMongoClient.factory, 'mongodb-atlas').db('ceng495_hw2_db');
-    const name = (new URL(window.location.href)).searchParams.get("name");
-    const invention_name = (new URL(window.location.href)).searchParams.get("pname");
-    const criteria = { user_name: name }
+    const client = stitch.Stitch.initializeDefaultAppClient('gamedistributorapp1-rlxbb');
+    const db = client.getServiceClient(stitch.RemoteMongoClient.factory, 'mongodb-atlas').db('hw2DB');
+    const name = (new URL(window.location.href)).searchParams.get("username");
+    const criteria = { username: name }
+    document.getElementById("user_tag").textContent="User :"+name;
 
-    //Find the product from db
-    var allDocuments = db.collection('users').find().toArray();
-    allDocuments.then(function (result){
-      if(result != null){
-        
-        var i=0;
-        while(result[i]){
-          var productList = result[i].inventions;
 
-          for(var item in productList){
-            if(productList[item].productName == invention_name ){
-              document.getElementById('product_owner').innerHTML = "Product Owner: " + result[i].user_name;
-              document.getElementById("product_photo").src = productList[item].productPhoto;
-              document.getElementById("product_name").innerHTML = "Product Name: " + invention_name; 
-              document.getElementById("product_cost").innerHTML = "Cost: " + productList[item].productCost;
-              document.getElementById("product_material").innerHTML = "Material(s) Used: " + productList[item].productMaterial;
-              document.getElementById("product_rating").innerHTML = "Total Rating: " + productList[item].totalRating + "/5";
-              document.getElementById("Optional1").innerHTML = productList[item].optionalElement1;
-              document.getElementById("Optional2").innerHTML = productList[item].optionalElement2;
+
+
+    db.collection('games').find().toArray().then(function (games){
+      if(games != null){
+        var array_len=games.length;
+        for(var i = 0; i < array_len; i++) {
+          var currentGame=games[i].gamename;
+          db.collection('rates').find().toArray().then(function(rates,err){
+            if(rates != null){
+              var sumRates=[];
+              
+              for (let index = 0; index < rates.length; index++) {
+                if(rates[index].gamename==currentGame){
+                  sumRates.push(rates[index]);
+                }
+                
+              }
+
+
+              db.collection('plays').find({gamename:currentGame}).toArray().then(function(plays,err){
+            if(plays != null){
+              var sumPlays=[];
+              
+              for (let index = 0; index < plays.length; index++) {
+                if(plays[index].gamename==currentGame){
+                  sumPlays.push(plays[index]);
+                }
+                
+              }
+
+              console.log(sumRates);
+              
+             // var userRatings=[];
+              for (let index = 0; index < sumPlays.length; index++) {
+                const element = sumPlays[index];
+                console.log(element);
+                //userRatings.push(elementPlays,elementRates);
+
+              }
+
+              for (let index = 0; index < sumRates.length; index++) {
+                const element = sumRates[index];
+                console.log(element);
+              }
+
+
             }
-          } 
-          i++;
+          });
+
+
+            }
+          });
+
+          //alert(playsTaken);
+          var divMain = document.createElement("div");
+          divMain.setAttribute("class","city");
+          var divName = document.createElement("div");
+          divName.setAttribute("class","desc")
+          var divGenres = document.createElement("div");
+          divGenres.setAttribute("class","desc")
+          var divPlayTime = document.createElement("div");
+          divPlayTime.setAttribute("class","desc")
+          var divRating = document.createElement("div");
+          divRating.setAttribute("class","desc");
+          
+
+
+          var text_gamename=document.createTextNode("Name :  "+games[i].gamename);
+          var text_gamegenres=document.createTextNode("Genre(s) :  "+games[i].gamegenres);
+          var text_playtime=document.createTextNode("Play Time  :  "+games[i].playtime+" hrs");
+          //var text_rating=document.createTextNode("Rating  :  "+ratingSum);
+
+          var img = document.createElement("img");
+          img.setAttribute("src", games[i].gamephoto);
+          img.setAttribute("height", "250");
+          img.setAttribute("width", "250");
+        
+          divName.appendChild(text_gamename);
+          divGenres.appendChild(text_gamegenres);
+          divPlayTime.appendChild(text_playtime);
+          //divRating.appendChild(text_rating);
+          
+          divMain.appendChild(img);
+          divMain.appendChild(divName);
+          divMain.appendChild(divGenres);
+          divMain.appendChild(divPlayTime);
+          divMain.appendChild(divRating);
+        //  divMain.appendChild(divComments);
+
+          document.getElementById("galleryDiv").appendChild(divMain);
         }
+        
+
       }
     });
-      
-
   </script>
 
-  <script>
-
-    function dropProduct(){
-
-      var allDocuments = db.collection('users').find().toArray();
-      allDocuments.then(function (result){
-        if(result != null){
-          
-          var i=0;
-          while(result[i]){
-            var productList = result[i].inventions;
-
-            for(var item in productList){
-              if(productList[item].productName == invention_name ){
-                if(result[i].user_name == name){
-
-                  productList[item].isVisible = false;
-
-                  var updateProducts = {inventions: productList};
-                  db.collection('users').updateOne(criteria,{$set: updateProducts});
-                  
-                  console.log("Item dropped.")
-                }
-                else{
-                  alert("Only owner can drop a product.");
-                } 
-              }
-            } 
-            i++;
-          }
-        }
-      });
+<script>
+  function toUserpage(){
+      loadUrl("./user.html?username=" + name);
     }
-
-    function arraySum(arr){
-      return arr.reduce(function(a,b){
-        return a + b
-      }, 0);
-    }
-
-    function findAverage(arr){
-      if(arr.length == 0){
-        return 0;
-      }
-      else{
-        return arraySum(arr)/arr.length;
-      }
-    }
-
-    function radioButtonValue() { 
-      var ele = document.getElementsByName('rating'); 
-        
-      for(var i = 0; i < ele.length; i++) { 
-        if(ele[i].checked) 
-          return parseInt(ele[i].value); 
-      }
-      return -1;
-    } 
-
-    function rateProduct(){
-
-      var val = radioButtonValue();
-      if(val == -1){
-        alert("Choose a valid rating.");
-      }
-
-      else{
-        var allDocuments = db.collection('users').find().toArray();
-        allDocuments.then(function (result){
-          if(result != null){
-            
-            var i=0;
-            while(result[i]){
-              var productList = result[i].inventions;
-
-              for(var item in productList){
-
-                var product = productList[item];
-
-                if(product.productName == invention_name ){
-                  
-                  var ratingFlag = true;
-                  for(var r in product.ratings){
-                    if(product.ratings[r].rating_user == name){
-                      console.log("update record");
-                      product.ratings[r].rating_value = val;
-                      ratingFlag = false;
-                    } 
-                  }
-                  if(ratingFlag){
-                    console.log("new record");
-                    var rating_entry = { rating_user: name, rating_value: val};
-                    product.ratings.push(rating_entry);
-                  }
-                
-                  var ratingValues = []
-                  for(var j in product.ratings){
-                    ratingValues.push(product.ratings[j].rating_value);
-                  }
-
-                  product.totalRating = findAverage(ratingValues);
-                  var updateProducts = {inventions: productList};
-                  db.collection('users').updateOne({user_name: result[i].user_name } ,{$set: updateProducts});
-                    
-                  break;
-                }
-              }
-              i++;
-            }
-          }
-        });
-        alert("New rating for "+ invention_name +" saved.");
-      }
-
-    }
-
-
-    function toUserpage(){
-      loadUrl("./user.html?name=" + name);
-    }
-
     function loadUrl(newLocation){
       window.location = newLocation;
       return false;
     }
-
-    
-  </script>
-
-
+</script>
 </body>
+<div>
+  <button type="button" onclick="toUserpage()">Back to User Page</button>
+</div>
 
 </html>

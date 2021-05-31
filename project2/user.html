@@ -66,7 +66,7 @@
       }
     });
     
-    document.getElementById("user_tag").textContent="User : "+name;
+    document.getElementById("user_tag").textContent="User :"+name;
 
     db.collection('rates').find({username : name}).toArray().then(function (ratingsOfUser){
       if(ratingsOfUser != null){
@@ -99,7 +99,9 @@
                     if(result != null){
                       var play_amount = parseInt(document.getElementById("playedtimeval").value);
                       db.collection('users').updateOne({username : name},{ $inc: { totalplaytime: play_amount}});
-                      db.collection('plays').insertOne({username: name,gamename:document.getElementById("game_name_dropdown").value,duration:play_amount});
+                      db.collection('games').updateOne({gamename:document.getElementById("game_name_dropdown").value},{ $inc: { playtime: play_amount}});
+                      db.collection('plays').updateOne({username: name,gamename:document.getElementById("game_name_dropdown").value},{ $inc: { duration: play_amount}});
+                      //db.collection('plays').insertOne({username: name,gamename:document.getElementById("game_name_dropdown").value,duration:play_amount});
                       alert(name + " is played "+ document.getElementById("playedtimeval").value+" hours");
 
                     }
@@ -109,9 +111,11 @@
               
     function commentOnGame(){
         
-      
+      db.collection('games').findOne({gamename:document.getElementById("game_name_dropdown").value,is_enabled:true}).then(function(is_enabled_result){
+      if(is_enabled_result!=null){
         db.collection('plays').findOne({username:name,gamename:document.getElementById("game_name_dropdown").value}).then(function(result){
             if(result != null){
+
               db.collection('comments').updateOne({username : name,gamename:document.getElementById("game_name_dropdown").value},{ $set:{Comment:document.getElementById("commentInput").value}},{ upsert: true });
               alert("Commented");
 
@@ -119,9 +123,17 @@
               alert("You have not played this game yet!");
             }
         });
+      }else{
+        alert("Comment is disabled for this game!");
+
+      }
+      });
       
       }
+
       function rateGame(){
+        db.collection('games').findOne({gamename:document.getElementById("game_name_dropdown").value,is_enabled:true}).then(function(is_enabled_result){
+      if(is_enabled_result!=null){
             db.collection('rates').updateOne({gamename:document.getElementById("game_name_dropdown").value,username : name}, 
             { $set:{rate:parseInt(document.getElementById("gamerate").value)}}, { upsert: true },
               function(err, res) {
@@ -136,7 +148,12 @@
             
 
     alert(document.getElementById("game_name_dropdown").value+" is rated!");
+  }else{
+        alert("Comment is disabled for this game!");
 
+      }
+      });
+      
 
       }
     function loadUrl(newLocation){
@@ -148,7 +165,7 @@
       loadUrl("./index.html");
     }
     function lookGames(){
-      loadUrl("./games.html");
+      loadUrl("./games.html?username=" +name);
     }
 
   </script>
