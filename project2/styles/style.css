@@ -134,7 +134,7 @@ button{
   }
   div.scrolldiv {
     background-color: lightblue;
-    width: 250px;
+    width: 500px;
     height: 110px;
     overflow: scroll;
   }

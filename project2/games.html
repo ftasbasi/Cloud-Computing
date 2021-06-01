@@ -29,58 +29,131 @@
     document.getElementById("user_tag").textContent="User :"+name;
 
 
+    async function getCollection(collection_name){
+      let collection=db.collection(collection_name);
+      let List=await collection.find().toArray();
+      return List;
+    }
+    
 
 
+
+    const ratesPromise=getCollection('rates').then();
+    const playsPromise=getCollection('plays').then();
+    const gamesPromise=getCollection('games').then();
+    const commentsPromise=getCollection('comments').then();
+
+
+    function sortFunction(a, b) {
+    if (a[2] === b[2]) {
+        return 0;
+    }
+    else {
+        return (a[2] < b[2]) ? 1 : -1;
+    }
+}
+
+    
+    Promise.all([ratesPromise,playsPromise,gamesPromise,commentsPromise]).then((values) => {
+      //iterating games
+      values[2].forEach(game => {
+          var sumOfUserRates=0;
+          var currentGame=game.gamename;
+          var comments=[];
+
+          values[0].forEach(rate =>{
+            
+            values[1].forEach(play =>{
+              if(rate.username==play.username && rate.gamename==currentGame && play.gamename==currentGame){
+                sumOfUserRates+=rate.rate*play.duration;
+              }
+            });
+            });
+
+values[1].forEach(play =>{
+          values[3].forEach(comment =>{
+          
+              if(comment.gamename==currentGame && play.gamename==currentGame && comment.username==play.username){
+                var subList=[];
+                comments.push([comment.comment,comment.username,play.duration]);
+                //comments.push(subList);
+               // divComments.appendChild(document.createTextNode(elem.join()));
+
+              }
+            });
+          });
+         comments.sort(sortFunction);
+
+          
+          var divMain = document.createElement("div");
+          divMain.setAttribute("class","city");
+          var divName = document.createElement("div");
+          divName.setAttribute("class","desc")
+          var divGenres = document.createElement("div");
+          divGenres.setAttribute("class","desc")
+          var divPlayTime = document.createElement("div");
+          divPlayTime.setAttribute("class","desc")
+          var divRating = document.createElement("div");
+          divRating.setAttribute("class","desc");
+          var divComments = document.createElement("div");
+          divComments.setAttribute("class","scrolldiv");
+          
+
+
+          var text_gamename=document.createTextNode("Name :  "+currentGame);
+          var text_gamegenres=document.createTextNode("Genre(s) :  "+game.gamegenres);
+          var text_playtime=document.createTextNode("Play Time  :  "+game.playtime+" hrs");
+          var text_rating=document.createTextNode("Rating  :  "+parseFloat(sumOfUserRates)/game.playtime);
+
+          var img = document.createElement("img");
+          img.setAttribute("src", game.gamephoto);
+          img.setAttribute("height", "250");
+          img.setAttribute("width", "250");
+        
+          divName.appendChild(text_gamename);
+          divGenres.appendChild(text_gamegenres);
+          divPlayTime.appendChild(text_playtime);
+          divRating.appendChild(text_rating);
+
+          comments.forEach(elem=>{
+              divComments.appendChild(document.createTextNode(elem[0]+","+elem[1]+","+elem[2]+"|"));
+
+
+          });
+          
+
+          
+          divMain.appendChild(img);
+          divMain.appendChild(divName);
+          divMain.appendChild(divGenres);
+          divMain.appendChild(divPlayTime);
+          divMain.appendChild(divRating);
+          divMain.appendChild(divComments);
+
+          document.getElementById("galleryDiv").appendChild(divMain);
+      });
+    });
+    
+    /*
     db.collection('games').find().toArray().then(function (games){
       if(games != null){
         var array_len=games.length;
         for(var i = 0; i < array_len; i++) {
           var currentGame=games[i].gamename;
-          db.collection('rates').find().toArray().then(function(rates,err){
-            if(rates != null){
-              var sumRates=[];
-              
-              for (let index = 0; index < rates.length; index++) {
-                if(rates[index].gamename==currentGame){
-                  sumRates.push(rates[index]);
-                }
-                
-              }
 
 
-              db.collection('plays').find({gamename:currentGame}).toArray().then(function(plays,err){
-            if(plays != null){
-              var sumPlays=[];
-              
-              for (let index = 0; index < plays.length; index++) {
-                if(plays[index].gamename==currentGame){
-                  sumPlays.push(plays[index]);
-                }
-                
-              }
-
-              console.log(sumRates);
-              
-             // var userRatings=[];
-              for (let index = 0; index < sumPlays.length; index++) {
-                const element = sumPlays[index];
-                console.log(element);
-                //userRatings.push(elementPlays,elementRates);
-
-              }
-
-              for (let index = 0; index < sumRates.length; index++) {
-                const element = sumRates[index];
-                console.log(element);
-              }
 
 
-            }
-          });
 
+          
+          
 
-            }
-          });
+          for (let index = 0; index < sumPlays.length; index++) {
+            console.log("rate|| user:"+sumRates[index].username+"| gamename: "+sumRates[index].gamename+"|rate: "+sumRates[index].rate);
+
+          }
+
+          
 
           //alert(playsTaken);
           var divMain = document.createElement("div");
@@ -124,6 +197,7 @@
 
       }
     });
+    */
   </script>
 
 <script>
