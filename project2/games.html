@@ -45,11 +45,11 @@
 
 
     function sortFunction(a, b) {
-    if (a[2] === b[2]) {
+    if (a[1] === b[1]) {
         return 0;
     }
     else {
-        return (a[2] < b[2]) ? 1 : -1;
+        return (a[1] < b[1]) ? 1 : -1;
     }
 }
 
@@ -59,23 +59,25 @@
       values[2].forEach(game => {
           var sumOfUserRates=0;
           var currentGame=game.gamename;
-          var comments=[];
-
+          
+          var totalPlayTime=0;
           values[0].forEach(rate =>{
             
             values[1].forEach(play =>{
               if(rate.username==play.username && rate.gamename==currentGame && play.gamename==currentGame){
                 sumOfUserRates+=rate.rate*play.duration;
+                totalPlayTime+=play.duration;
               }
             });
             });
-
-values[1].forEach(play =>{
-          values[3].forEach(comment =>{
+            
+            
+            var comments=[];
+          values[1].forEach(play =>{
+            values[3].forEach(comment =>{
           
-              if(comment.gamename==currentGame && play.gamename==currentGame && comment.username==play.username){
-                var subList=[];
-                comments.push([comment.comment,comment.username,play.duration]);
+              if(comment.gamename==currentGame && play.gamename==currentGame && comment.username==play.username ){
+                comments.push([comment,play.duration]);
                 //comments.push(subList);
                // divComments.appendChild(document.createTextNode(elem.join()));
 
@@ -97,13 +99,25 @@ values[1].forEach(play =>{
           divRating.setAttribute("class","desc");
           var divComments = document.createElement("div");
           divComments.setAttribute("class","scrolldiv");
+          var divOptional1 = document.createElement("div");
+          divOptional1.setAttribute("class","desc");
+          var divOptional2 = document.createElement("div");
+          divOptional2.setAttribute("class","desc");
           
-
+          //gameoptional1
 
           var text_gamename=document.createTextNode("Name :  "+currentGame);
           var text_gamegenres=document.createTextNode("Genre(s) :  "+game.gamegenres);
           var text_playtime=document.createTextNode("Play Time  :  "+game.playtime+" hrs");
-          var text_rating=document.createTextNode("Rating  :  "+parseFloat(sumOfUserRates)/game.playtime);
+          var text_rating=document.createTextNode("Rating  :  "+parseFloat(sumOfUserRates)/totalPlayTime);
+          if(game.gameoptional1){
+            var text_optional1=document.createTextNode("Optional 1  :  "+game.gameoptional1);
+            divOptional1.appendChild(text_optional1);
+          }
+          if(game.gameoptional2){
+            var text_optional2=document.createTextNode("Optional 2  :  "+game.gameoptional2);
+            divOptional2.appendChild(text_optional2);
+          }
 
           var img = document.createElement("img");
           img.setAttribute("src", game.gamephoto);
@@ -116,9 +130,9 @@ values[1].forEach(play =>{
           divRating.appendChild(text_rating);
 
           comments.forEach(elem=>{
-              divComments.appendChild(document.createTextNode(elem[0]+","+elem[1]+","+elem[2]+"|"));
-
-
+              divComments.appendChild(document.createTextNode(elem[0].username+" said : "+elem[0].Comment+" ("+elem[1]+" hours of play)"));
+              var br = document.createElement("br");
+              divComments.appendChild(br);
           });
           
 
@@ -129,6 +143,9 @@ values[1].forEach(play =>{
           divMain.appendChild(divPlayTime);
           divMain.appendChild(divRating);
           divMain.appendChild(divComments);
+          divMain.appendChild(divOptional1);
+          divMain.appendChild(divOptional2);
+
 
           document.getElementById("galleryDiv").appendChild(divMain);
       });

@@ -21,8 +21,20 @@
   </div>
   <div>
     <input type="text" id="gamename" class="input-name" placeholder="Game Name" >
-    <input type="text" id="gamegenres" class="input-name" placeholder="Game Genre(s)" >
-    <input type="text" id="gamephoto" class="input-name" placeholder="Game Photo" >
+    <label for="gamegenres">Genre(s):</label>
+    <select name="gamegenres" id="gamegenres">
+        <option value="Sandbox">Sandbox</option>
+        <option value="Real-time strategy (RTS)">Real-time strategy (RTS)</option>
+        <option value="Shooters (FPS and TPS)">Shooters (FPS and TPS)</option>
+        <option value="Multiplayer online battle arena (MOBA)">Multiplayer online battle arena (MOBA)</option>
+        <option value="Role-playing (RPG, ARPG, and More)">Role-playing (RPG, ARPG, and More)</option>
+        <option value="Simulation and sports">Simulation and sports</option>
+        <option value="Puzzlers and party games">Puzzlers and party games</option>
+        <option value="Action-adventure">Action-adventure</option>
+        <option value="Survival and horror">Survival and horror</option>
+        <option value="Platformer">Platformer</option>
+    </select>
+    <input type="text" id="gamephoto" class="input-name" placeholder="Game Photo URL" >
     <input type="text" id="gameoptional1" class="input-name" placeholder="Game Optional 1" >
     <input type="text" id="gameoptional2" class="input-name" placeholder="Game Optional 2" >
     <button class="button" onclick="addGame()" value="addGame">addGame</button>

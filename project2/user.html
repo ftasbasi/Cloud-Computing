@@ -19,7 +19,14 @@
     <label id="user_avg_ratings"></label>
 
   </div>
+  <div>
+    <label id="most_played_game"></label>
 
+  </div>
+  <div>
+    <label id="total_game_play"></label>
+
+  </div>
   <div>
     <label for="Game Name">Select game</label>
     <select id="game_name_dropdown" name="game_name_dropdown" class="form-control" placeholder="Game name" required> </select>
@@ -89,6 +96,21 @@
       }
     });
 
+    db.collection('plays').find({username : name}, { sort: { duration: -1 } }).toArray().then(function (maxPlayedGame){
+      if(maxPlayedGame != null){
+       
+
+        document.getElementById("most_played_game").textContent="Most played game: "+maxPlayedGame[0].gamename+" ("+maxPlayedGame[0].duration+" hours)";
+
+
+
+      }
+    });
+    /*HERE
+    db.collection('plays').aggregate([ { $match: {} }, { $group:
+      { _id : null, sum : { $sum: "$duration" } }
+      }]).then(res => console.log(res[0].sum));
+*/
   </script>
 
   <script>
@@ -100,7 +122,7 @@
                       var play_amount = parseInt(document.getElementById("playedtimeval").value);
                       db.collection('users').updateOne({username : name},{ $inc: { totalplaytime: play_amount}});
                       db.collection('games').updateOne({gamename:document.getElementById("game_name_dropdown").value},{ $inc: { playtime: play_amount}});
-                      db.collection('plays').updateOne({username: name,gamename:document.getElementById("game_name_dropdown").value},{ $inc: { duration: play_amount}});
+                      db.collection('plays').updateOne({username: name,gamename:document.getElementById("game_name_dropdown").value},{ $inc: { duration: play_amount}},{ upsert: true });
                       //db.collection('plays').insertOne({username: name,gamename:document.getElementById("game_name_dropdown").value,duration:play_amount});
                       alert(name + " is played "+ document.getElementById("playedtimeval").value+" hours");
 
@@ -149,7 +171,7 @@
 
     alert(document.getElementById("game_name_dropdown").value+" is rated!");
   }else{
-        alert("Comment is disabled for this game!");
+        alert("Rating is disabled for this game!");
 
       }
       });
