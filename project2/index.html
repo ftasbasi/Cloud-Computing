@@ -9,15 +9,15 @@
     <script src="https://s3.amazonaws.com/stitch-sdks/js/bundles/4.6.0/stitch.js"></script>
   <div>
     <input type="text" id="username" class="input-name" placeholder="Username" >
-    <button class="button" onclick="addUser()" value="addUser">addUser</button>
+    <button class="buttonRoute" onclick="addUser()" value="addUser">Add User</button>
 
   </div>
   
   <div>
     <label for="User Name">Select user</label>
     <select id="user_name_dropdown" name="user_name_dropdown" class="form-control" placeholder="User name" required> </select>
-    <button class="button" onclick="removeUser()" value="removeUser">removeUser</button>
-    <button class="button" onclick="login()" value="login">Login</button>
+    <button class="buttonRoute" onclick="removeUser()" value="removeUser">Remove User</button>
+    <button class="buttonRoute" onclick="login()" value="login">Login</button>
   </div>
   <div>
     <input type="text" id="gamename" class="input-name" placeholder="Game Name" >
@@ -37,14 +37,14 @@
     <input type="text" id="gamephoto" class="input-name" placeholder="Game Photo URL" >
     <input type="text" id="gameoptional1" class="input-name" placeholder="Game Optional 1" >
     <input type="text" id="gameoptional2" class="input-name" placeholder="Game Optional 2" >
-    <button class="button" onclick="addGame()" value="addGame">addGame</button>
+    <button class="buttonRoute" onclick="addGame()" value="addGame">Add Game</button>
   </div>
   <div>
     <label for="Game Name">Select game</label>
     <select id="game_name_dropdown" name="game_name_dropdown" class="form-control" placeholder="Game name" required> </select>
-    <button class="button" onclick="removeGame()" value="removeGame">removeGame</button>
-    <button class="button" onclick="disableRatingComment()" value="disableRatingComment">disableRatingComment</button>
-    <button class="button" onclick="enableRatingComment()" value="enableRatingComment">enableRatingComment</button>
+    <button class="buttonRoute" onclick="removeGame()" value="removeGame">Remove Game</button>
+    <button class="buttonRoute" onclick="disableRatingComment()" value="disableRatingComment">Disable Rating Comment</button>
+    <button class="buttonRoute" onclick="enableRatingComment()" value="enableRatingComment">Enable Rating Comment</button>
 
   </div>
 
@@ -106,7 +106,7 @@
    for(i = L; i >= 0; i--) {
       selectElement.remove(i);
    }
-}
+  }
 
 
 
@@ -170,6 +170,21 @@
             .catch(err => {
             console.error(err)
             }));
+
+
+            db.collection('plays').deleteOne({username: document.getElementById("user_name_dropdown").value})
+            .catch(err => {
+            console.error(err)
+            });
+            db.collection('comments').deleteOne({username: document.getElementById("user_name_dropdown").value})
+            .catch(err => {
+            console.error(err)
+            });
+            db.collection('rates').deleteOne({username: document.getElementById("user_name_dropdown").value})
+            .catch(err => {
+            console.error(err)
+            });
+
             alert("User is removed.");              
         }
         else{
@@ -208,7 +223,19 @@
             .catch(err => {
             console.error(err)
             }));
-            alert("Game is removed.");     
+            alert("Game is removed.");    
+            db.collection('plays').deleteOne({gamename: document.getElementById("game_name_dropdown").value})
+            .catch(err => {
+            console.error(err)
+            });
+            db.collection('comments').deleteOne({gamename: document.getElementById("game_name_dropdown").value})
+            .catch(err => {
+            console.error(err)
+            });
+            db.collection('rates').deleteOne({gamename: document.getElementById("game_name_dropdown").value})
+            .catch(err => {
+            console.error(err)
+            }); 
                      
         }
         else{
@@ -223,7 +250,7 @@
         
             myDocument.then(function(result){
                 if(result != null){
-                    loadUrl("./user.html?username=" + loginuser);
+                    gotoURL("./user.html?username=" + loginuser);
                 }
                 else{
                     alert("User doesn't exist.");
@@ -250,7 +277,7 @@
                 });
                 alert("Game is updated.");
         }
-        function loadUrl(newurl){
+        function gotoURL(newurl){
             window.location = newurl;
             return false;
         }

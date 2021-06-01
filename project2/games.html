@@ -7,7 +7,7 @@
   <title>Games Page</title>
   <link rel="stylesheet" href="./styles/style.css" type="text/css"/>
   <script src="https://s3.amazonaws.com/stitch-sdks/js/bundles/4.6.0/stitch.js"></script>
-  <div>
+  <div class="usertag">
     
     <label id="user_tag"></label>
 
@@ -151,84 +151,21 @@
       });
     });
     
-    /*
-    db.collection('games').find().toArray().then(function (games){
-      if(games != null){
-        var array_len=games.length;
-        for(var i = 0; i < array_len; i++) {
-          var currentGame=games[i].gamename;
-
-
-
-
-
-          
-          
-
-          for (let index = 0; index < sumPlays.length; index++) {
-            console.log("rate|| user:"+sumRates[index].username+"| gamename: "+sumRates[index].gamename+"|rate: "+sumRates[index].rate);
-
-          }
-
-          
-
-          //alert(playsTaken);
-          var divMain = document.createElement("div");
-          divMain.setAttribute("class","city");
-          var divName = document.createElement("div");
-          divName.setAttribute("class","desc")
-          var divGenres = document.createElement("div");
-          divGenres.setAttribute("class","desc")
-          var divPlayTime = document.createElement("div");
-          divPlayTime.setAttribute("class","desc")
-          var divRating = document.createElement("div");
-          divRating.setAttribute("class","desc");
-          
-
-
-          var text_gamename=document.createTextNode("Name :  "+games[i].gamename);
-          var text_gamegenres=document.createTextNode("Genre(s) :  "+games[i].gamegenres);
-          var text_playtime=document.createTextNode("Play Time  :  "+games[i].playtime+" hrs");
-          //var text_rating=document.createTextNode("Rating  :  "+ratingSum);
-
-          var img = document.createElement("img");
-          img.setAttribute("src", games[i].gamephoto);
-          img.setAttribute("height", "250");
-          img.setAttribute("width", "250");
-        
-          divName.appendChild(text_gamename);
-          divGenres.appendChild(text_gamegenres);
-          divPlayTime.appendChild(text_playtime);
-          //divRating.appendChild(text_rating);
-          
-          divMain.appendChild(img);
-          divMain.appendChild(divName);
-          divMain.appendChild(divGenres);
-          divMain.appendChild(divPlayTime);
-          divMain.appendChild(divRating);
-        //  divMain.appendChild(divComments);
-
-          document.getElementById("galleryDiv").appendChild(divMain);
-        }
-        
-
-      }
-    });
-    */
+  
   </script>
 
 <script>
-  function toUserpage(){
-      loadUrl("./user.html?username=" + name);
+  function gotoUserpage(){
+      gotoURL("./user.html?username=" + name);
     }
-    function loadUrl(newLocation){
+    function gotoURL(newLocation){
       window.location = newLocation;
       return false;
     }
 </script>
 </body>
 <div>
-  <button type="button" onclick="toUserpage()">Back to User Page</button>
+  <button class ="buttonRoute" type="button" onclick="gotoUserpage()">Back to User Dashboard</button>
 </div>
 
 </html>

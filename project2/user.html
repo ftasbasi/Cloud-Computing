@@ -11,7 +11,7 @@
 
 <body>
 
-  <div>
+  <div class="usertag">
     <label id="user_tag"></label>
 
   </div>
@@ -27,6 +27,10 @@
     <label id="total_game_play"></label>
 
   </div>
+  <div class="container" id="commentsDiv">
+
+
+  </div>
   <div>
     <label for="Game Name">Select game</label>
     <select id="game_name_dropdown" name="game_name_dropdown" class="form-control" placeholder="Game name" required> </select>
@@ -35,22 +39,22 @@
   </div>
   <div>
     <input id="gamerate" type="number" min="1" max="5" step="1" value="1" required>
-    <button class="button" onclick="rateGame()" value="rateGame">rateGame</button>
+    <button class ="buttonRoute" onclick="rateGame()" value="rateGame">Rate Game</button>
   </div>
   <div>
     <input id="playedtimeval" type="number" min="1" max="10" step="1" value="1" required>
-    <button class="button" onclick="playGame()" value="playGame">playGame</button>
+    <button class="buttonRoute" onclick="playGame()" value="playGame">Play Game</button>
   </div>
   <div>
     <input type="text" id="commentInput" class="input-name" placeholder="Comment here" >
 
-    <button class="button" onclick="commentOnGame()" value="commentOnGame">commentOnGame</button>
+    <button class="buttonRoute" onclick="commentOnGame()" value="commentOnGame">Comment On Game</button>
   </div>
   <div>
-    <button class="button" onclick="lookGames()" value="lookGames">lookGames</button>
+    <button class="buttonRoute" onclick="gotoGamesPage()" value="gotoGamesPage">Go to Games Page</button>
   </div>
   <div>
-    <button class="button" onclick="toHomepage()">Back to Home</button>
+    <button class="buttonRoute" onclick="gotoHomePage()">Go to Home</button>
   </div>
   
   <script>
@@ -106,11 +110,41 @@
 
       }
     });
-    /*HERE
-    db.collection('plays').aggregate([ { $match: {} }, { $group:
-      { _id : null, sum : { $sum: "$duration" } }
-      }]).then(res => console.log(res[0].sum));
-*/
+
+    db.collection('users').find({username : name}).toArray().then(function (userdata){
+      if(userdata != null){
+       
+
+
+        document.getElementById("total_game_play").textContent="Total Play Time : "+userdata[0].totalplaytime+" hours";
+
+
+
+      }
+    });
+
+    var divComments = document.createElement("div");
+    divComments.setAttribute("class","scrolldiv2");
+    db.collection('comments').find({username : name}).toArray().then(function (commentsOfUser){
+      if(commentsOfUser != null){
+
+        var array_len=commentsOfUser.length;
+        var total = 0;
+
+        for(var i = 0; i < array_len; i++) {
+          divComments.appendChild(document.createTextNode(commentsOfUser[i].username+" said : "+commentsOfUser[i].Comment+" | for game: "+commentsOfUser[i].gamename));
+              var br = document.createElement("br");
+              divComments.appendChild(br);
+        }
+
+        
+
+      }
+    });
+    document.getElementById("commentsDiv").appendChild(divComments);
+
+
+
   </script>
 
   <script>
@@ -178,16 +212,16 @@
       
 
       }
-    function loadUrl(newLocation){
+    function gotoURL(newLocation){
       window.location = newLocation;
       return false;
     }
 
-    function toHomepage(){
-      loadUrl("./index.html");
+    function gotoHomePage(){
+      gotoURL("./index.html");
     }
-    function lookGames(){
-      loadUrl("./games.html?username=" +name);
+    function gotoGamesPage(){
+      gotoURL("./games.html?username=" +name);
     }
 
   </script>
