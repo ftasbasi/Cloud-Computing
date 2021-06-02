@@ -7,6 +7,8 @@ CENG 495 - Cloud Computing Spring 2020-2021 Homework 2
 
 In this assignment, I implemented a simple Game Distributor App using Javascript and MongoDB Realm.
 
+(You need to refresh the page to see your action results)
+
 Project Details:
 
 index.html          =>  It's the main page which is connected to MongoDB Cluster via Realm framework.
