@@ -29,3 +29,6 @@ games.html          =>  It's a page for games (Games Dashboard).
                         This page provides statistics (play times,avg ratings, comments) and informations for all games.
 
 styles/style.css    =>  Style sheet for html.
+
+
+Just download files and run the index.html through your browser.
