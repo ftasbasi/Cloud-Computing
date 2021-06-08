@@ -11,4 +11,4 @@ For deployment, I used Google App Engine Services.
 
 I used a sample style code (only CSS part) from https://codepen.io/ainalem/pen/ZxbbwO.
 
-Here is my simple meme generator : https://e2041853.appspot.com
+Here is my simple meme generator : https://e2041853.appspot.com (closed because of Google App Engine billing costs)
