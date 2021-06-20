@@ -57,7 +57,7 @@ public class Hw3 {
         }
 
         // Determine whether the output folder exists, and delete it if it exists
-        Path path = new Path(args[2]);// Take the first parameter that represents the output directory (the 0th parameter is the input directory)
+        Path path = new Path(args[2]);// Take the first parameter that represents the output directory (the 2nd parameter is the input directory)
         FileSystem fileSystem = path.getFileSystem(conf);// Find this file according to path
         if (fileSystem.exists(path)) {
             fileSystem.delete(path, true);// true means that even if there is something in the output, it will be deleted
