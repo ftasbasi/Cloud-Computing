@@ -1,3 +1,7 @@
+![](https://img.shields.io/badge/Java-ED8B00?style=for-the-badge&logo=java&logoColor=white)
+<img src="https://hadoop.apache.org/hadoop-logo.jpg" width=100>
+
+
 Middle East Technical University - 
 Computer Engineering Department
 

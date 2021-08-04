@@ -1,16 +1,15 @@
+![](https://img.shields.io/badge/JavaScript-F7DF1E?style=for-the-badge&logo=javascript&logoColor=black)
+![](https://img.shields.io/badge/MongoDB-4EA94B?style=for-the-badge&logo=mongodb&logoColor=white)
+![](https://img.shields.io/badge/HTML-E34F26?style=for-the-badge&logo=html5&logoColor=white)
+![](https://img.shields.io/badge/CSS-5C2D91?&style=for-the-badge&logo=css3&logoColor=white)
+
 Middle East Technical University - 
 Computer Engineering Department
-
 (Furkan TAŞBAŞI)
 
 CENG 495 - Cloud Computing Spring 2020-2021 Homework 2
 
 In this assignment, I implemented a simple Game Distributor App using Javascript and MongoDB Realm.
-
-<imc src="https://github.com/tkswann2/tech-logos/blob/master/jslogo.png" height="desired height in pixels">
-
-<imc src="https://github.com/tkswann2/tech-logos/blob/master/mongo.png" height="desired height in pixels">
-
 
 (You need to refresh the page to see your action results)
 
